@@ -20,12 +20,14 @@ import Octicons from "@expo/vector-icons/Octicons"
 import Animated, { LinearTransition } from "react-native-reanimated"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { StatusBar } from "expo-status-bar"
+import { useRouter } from "expo-router"
 export default function Index() {
     const { colorScheme, setColorScheme, theme } = useContext(ThemeContext)
     const [todos, setTodos] = useState<Array<dataType>>(
         data.sort((a, b) => b.id - a.id)
     )
     const [text, setText] = useState<string>("")
+    const router = useRouter()
     const styles = createStyles(theme, colorScheme)
     const [loaded, error] = useFonts({
         Inter_400Regular,
@@ -69,6 +71,7 @@ export default function Index() {
     }, [todos])
 
     if (!loaded && !error) return null
+
     const addTodo = () => {
         if (text.trim()) {
             setTodos([
@@ -93,6 +96,10 @@ export default function Index() {
     const deleteTodo = (id: number) => {
         setTodos(todos.filter((todo) => todo.id !== id))
     }
+
+    const handlePress = (id: number) => {
+        router.push(`/todo/${id}`)
+    }
     const renderItem = ({ item }: { item: dataType }) => (
         <View style={styles.item}>
             <View
@@ -116,11 +123,11 @@ export default function Index() {
                     )}
                 </Pressable>
 
-                <Pressable onPress={() => toggleTodo(item.id)}>
+                <Pressable onPress={() => handlePress(item.id)}>
                     <Text
                         style={[
                             styles.title,
-                            item.completed && styles.completedText,
+                            // item.completed && styles.completedText,
                         ]}
                     >
                         {item.title}
